@@ -1,0 +1,10 @@
+FROM golang:1.18-alpine
+
+WORKDIR /IAlways
+
+
+
+
+COPY * ./
+EXPOSE 55056
+CMD [ "./IAlways" ]

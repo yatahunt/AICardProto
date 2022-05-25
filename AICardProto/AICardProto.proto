@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+option go_package = "AIpoker/AIPokerProto";  
+
+package AIPokerProto;
+
+message PlayerID{
+    int64 ID = 1;
+}
+message GameStateID{
+    int64 ID = 1;
+}
+message Chips{
+    int64 Chips = 1;
+} 
+message Card {
+    string Number = 1;
+    string Suit = 2;
+    string SuitChar = 3;
+}
+ 
+message PlayerDefinition{
+    PlayerID ID = 1;
+    string Name = 2; 
+    string Secret = 3;
+}
+enum PlayerStatus{
+    PlayerStatusJoined = 0; 
+    PlayerStatusCheck = 1; 
+    PlayerStatusCall = 2;
+    PlayerStatusAllIn = 3;
+    PlayerStatusRaised = 4;
+    PlayerStatusFold = 5; 
+    PlayerStatusWaiting = 6;
+    
+    PlayerStatusLeaveGame = 99;
+    PlayerStatusBankrupt = 100;       
+    PlayerStatusIllegalAction = 1000;    
+    PlayerStatusTimeOut = 1002;
+
+    
+    
+}
+ 
+enum GameStatus {
+    GameWaitingToStart = 0;
+// game in progress    
+    GamePreFlop = 10;
+    GameFlop = 11;
+    GameRiver = 12;
+    GameTurn = 13; 
+    GameShowDown = 14;
+    GameFinished = 99;
+    IllegalStatus = 1000;
+}
+message PlayerState{
+    PlayerID ID = 1;
+    repeated Card Cards = 2; 
+    Chips Chips = 3;
+    PlayerStatus Status = 4;
+    Chips BettedThisHand = 5;    
+    Chips BettedThisStage = 6;
+    bool OutOfGame = 10;
+    bool OutOfHand = 11;
+    int64 BankruptRound = 12;
+    
+}
+
+
+
+message GameInteraction {    
+    // The player's action.
+    PlayerStatus Action = 1;    
+    Chips Amount = 2;
+    PlayerID PlayerID = 3; 
+}
+message GameState {
+    GameStateID ID = 1;
+    GameStatus Status = 100;
+    PlayerID Dealer = 2;
+    PlayerID SmallBlind = 3;
+    PlayerID BigBlind = 4; 
+    Chips Pot = 5;
+    Chips BettedThisHand = 6;
+    Chips BettedThisStage = 7;
+    int64 Round = 8;
+    repeated PlayerState Players = 9;     
+    repeated Card ComunityCards = 11; 
+    PlayerID Winner = 12;
+}
+message GameDefinition{
+    string Version = 1;
+    string Name = 2;
+    int64 InitialPlayers = 3;
+    
+    int64 MaxRounds = 4;
+    // int64 MaxTime = 5;
+    // int64 MinTime = 6;
+    Chips MaxRaise = 7;
+    Chips MinRaise = 8;
+    // Chips MaxBet = 9;
+    // Chips MinBet = 10;
+    Chips SmallBlind = 11;
+    Chips BigBlind = 12;
+    Chips StartingPlayerChips = 13;
+    
+
+}
+message PlayerInscription{
+    PlayerDefinition Player = 1;
+    GameDefinition Game = 2;
+}
+// The response message containing the greetings
+message GameHistory {
+    repeated  GameState  State = 1; 
+    repeated PlayerDefinition Players = 2;
+    GameDefinition Game = 3; 
+
+}
+ 
+service GameServices { 
+  rpc Interact (GameInteraction) returns (GameHistory) {}
+  rpc Join (PlayerDefinition) returns (PlayerInscription) {} 
+}
+ 
+  
